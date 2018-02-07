@@ -2,11 +2,9 @@ package trabalhoCompiladores;
 
 public class IParser {
 	public static final char EOF = (char)-1;
-	public static final String SUM =  "+";
-	public static final String LPAREN = "(";
-	public static final String RPAREN = ")";
-	public static final String PONT1 = "*";
-	public static final String PONT2 = "*";	
+
+	public String palavra = "";
+	public int count =  0;
 
 	/*
 	* Retorna o token (caractere) da vez. Caso toda a entrada
@@ -15,79 +13,103 @@ public class IParser {
 	* como um lexer simplificado.
 	*/
 	public char lookahead() {
+		if (count == palavra.length()) {
+			return EOF;
+		}
+		
+		char c = palavra.charAt(count);
+		while (c == '\t'|| c ==' ') {
+			count++;
+			c = palavra.charAt(count);	
+
+		}		
+		return c; 
+	}
+	
+	public void move() {
+		count++;
+	}
 	/*
 	* Este método deve comparar o lookahead com um outro
 	* caractere, se eles forem iguais avança para o próximo
 	* caractere, caso contrário lança um erro de sintaxe.
 	*/
-		while (isWhitespace(peek)) nextChar();
-		switch(peek) {
-		case '+':
-			nextChar();
-			return Token.SUM;
-		case '*':
-			nextChar();
-			return Token.MUL;
-		
-		case '(':
-			nextChar();
-			return Token.LPAREN;
-		case ')':
-			nextChar();
-			return Token.RPAREN;
-		case EOF_CHAR:
-			return Token.EOF;
-		default:
-			if (Character.isDigit(peek)) {
-				String num = "";
-				do {
-					num += peek;
-					nextChar();
-				} while( Character.isDigit(peek) );
-				if ( peek != '.' ) return new Token(Tag.LIT_INT, num);
-				do {
-					num += peek;
-					nextChar();
-				} while ( Character.isDigit(peek) );
-				return new Token(Tag.LIT_REAL, num);
-			} else if ( isIdentifierStart(peek)  ) {
-				String id = "";
-				do {
-					id += peek;
-					nextChar();
-				} while ( isIdentifierPart(peek) );
-				if ( keywords.containsKey(id) )
-					return keywords.get(id);
-				return new Token(Tag.ID, id );
-			}
-		}
-	
-	private static boolean isWhitespace(int c) {
-		switch (c) {
-		case ' ': case '\t': case '\n':
-			return true;
-		default: return false;
-		}
-	}
 	public boolean match(char c) {
+		char look = lookahead();
+		if (look == c) {
+			System.out.println(c);
+			move();
+			return true;
+		}
+		else {
+			error("'" + c + "' inesperado ");
+			return false;
+		}
+		
+		
+	}
 	/*
 	 * Este método deve imprimir uma mensagem de erro
 	 * indicando o endereço do caractere que causou o erro
 	 * e depois finalizar o programa
-	 */
-		
-			
-		if(look.tag() == t)
-			return move();
-		error("'" + look.lexeme() + "' inesperado");
-		return null;
-		
+	 */	
+	public void error(String s) {
+		System.err.println("Erro no endereço: " + count + ": " + s);
+		System.exit(0);
 	}
-	
-	public void error(String s);
 	/*
 	 * Método que inicia a análise sintática chamando o
 	 * método que representa o não-terminal inicial
 	 */
-	public boolean parse();
+	public boolean parse() {
+		palavra = "aa";
+		E();
+		
+		
+		return true;
+	}
+	public void E() {
+		P();
+		A();
+	}
+	public void A() {
+		if (lookahead() == '+') {
+			match('+');
+			P();
+			A();
+		}
+		
+	}
+	public void P() {
+		F();
+		G();
+	}
+	public void G() {
+		if (lookahead() == '*') {
+			match('*');
+			if (match('*')) {
+				P();
+			}
+		}
+		
+	}
+	public void F() {
+		
+		if (lookahead() == '(') {
+			match('(');
+			E();
+			match(')');
+		}
+		else if(lookahead() == 'a') {
+			match('a');
+		}
+		else {
+			error("expressão inválida");
+		}
+		
+	}
+	
 }
+
+
+
