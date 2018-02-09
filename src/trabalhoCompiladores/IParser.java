@@ -62,7 +62,7 @@ public class IParser {
 	 * método que representa o não-terminal inicial
 	 */
 	public boolean parse() {
-		palavra = "aa";
+		palavra = "a**a+a**a";
 		E();
 		
 		
