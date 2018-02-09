@@ -3,9 +3,13 @@ package trabalhoCompiladores;
 public class IParser {
 	public static final char EOF = (char)-1;
 
-	public String input = "";
-	public int index =  0;
+	public String input;
+	public int index;
 
+	public IParser(String i) {
+		input = i;
+		index = 0;
+	}
 	/*
 	* Retorna o token (caractere) da vez. Caso toda a entrada
 	* já tenha sido consumida, retorna EOF. Além disso, deve
@@ -62,13 +66,11 @@ public class IParser {
 	 * método que representa o não-terminal inicial
 	 */
 	public boolean parse() {
-		input = "a**a+a**a";
+		//input = "a*";
 		E();
 		if(lookahead() != EOF){
 			error("expressão inválida");
 		}
-		
-		
 		return true;
 	}
 	public void E() {
@@ -113,7 +115,3 @@ public class IParser {
 	}
 	
 }
-
-
-
-
